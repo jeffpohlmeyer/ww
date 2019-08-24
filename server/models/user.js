@@ -1,0 +1,26 @@
+const mongoose = require('mongoose');
+
+const Schema = mongoose.Schema;
+
+const userSchema = new Schema({
+	email: {
+		type: String,
+		required: true
+	},
+	username: {
+		type: String,
+		required: false
+	},
+	password: {
+		type: String,
+		required: true
+	},
+	createdRecipes: [
+		{
+			type: Schema.Types.ObjectId,
+			ref: 'Recipe'
+		}
+	]
+});
+
+module.exports = mongoose.model('User', userSchema);
