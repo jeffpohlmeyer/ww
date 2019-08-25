@@ -15,6 +15,14 @@ const userSchema = new Schema({
 		type: String,
 		required: true
 	},
+	startDay: {
+		type: Number,
+		required: false
+	},
+	flexPoints: {
+		type: Number,
+		required: false
+	},
 	createdRecipes: [
 		{
 			type: Schema.Types.ObjectId,

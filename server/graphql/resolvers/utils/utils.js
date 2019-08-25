@@ -1,5 +1,5 @@
-const User = require('../../models/user');
-const Recipe = require('../../models/recipe');
+const User = require('../../../models/user');
+const Recipe = require('../../../models/recipe');
 
 const user = async userId => {
 	try {

@@ -33,22 +33,38 @@ module.exports = buildSchema(`
 			email: String!
 			username: String
 			password: String
-			startDay: Int!
-			flexPoints: Int!
+			startDay: Int
+			flexPoints: Int
 			createdRecipes: [Recipe!]
 		}
-		
+				
 		type AuthData {
 			userId: ID!
 			token: String!
 			tokenExpiration: Int!
 		}
 		
-		type DayData {
+		type Week {
 			_id: ID!
-			period: String!
+			weight: Float!
+			points: Int!
+			flexPoints: Int!
+			days: [Day!]!
 		}
 		
+		type Day {
+			_id: ID!
+			points: Int!
+			periods: [Period]!
+		}
+		
+		type Period {
+			_id: ID!
+			timePeriod: String!
+			foods: [Food]!
+			recipes: [Recipe]!
+		}
+				
 		input FoodInput {
 			name: String!
 			fat: Float!
@@ -78,6 +94,14 @@ module.exports = buildSchema(`
 		input UserInput {
 			email: String!
 			password: String!
+			username: String
+			startDay: Int
+			flexPoints: Int
+		}
+		
+		input WeekInput {
+			weight: Float!
+			userId: String!
 		}
 		
 		type RootQuery {
@@ -91,6 +115,7 @@ module.exports = buildSchema(`
 			createFood(foodInput: FoodInput): Food		
 			createRecipe(recipeInput: RecipeInput): Recipe
 			createUser(userInput: UserInput): User
+			createWeek(weekInput: WeekInput): Week
 		}
 		
 		schema {

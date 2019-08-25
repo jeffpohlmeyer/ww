@@ -1,7 +1,7 @@
 const User = require('../../models/user');
 const Recipe = require('../../models/recipe');
 
-const { graphQlUser } = require('./utils');
+const { graphQlUser } = require('./utils/utils');
 
 module.exports = {
 	recipes: async () => {
@@ -20,7 +20,7 @@ module.exports = {
 	},
 	createRecipe: async (args, req) => {
 		if (!req.isAuth) {
-			throw new Error('You are not authorized to perform this action.  Please log in and try again.')
+			throw new Error('You are not authorized to create a recipe.  Please log in and try again.')
 		}
 		const recipe = new Recipe({
 			name: args.recipeInput.name,
