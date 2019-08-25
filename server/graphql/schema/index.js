@@ -51,12 +51,15 @@ module.exports = buildSchema(`
 			weight: Float!
 			points: Int!
 			flexPoints: Int!
+			startDate: String!
 			days: [Day!]!
 		}
 		
 		type Day {
 			_id: ID!
 			points: Int!
+			date: String!
+			dayOfWeek: String!
 			periods: [Period]!
 		}
 		
@@ -104,6 +107,7 @@ module.exports = buildSchema(`
 		input WeekInput {
 			weight: Float!
 			userId: String!
+			startDate: String!
 		}
 		
 		type RootQuery {

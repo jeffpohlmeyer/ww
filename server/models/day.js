@@ -7,6 +7,14 @@ const daySchema = new Schema({
 		type: Number,
 		required: true
 	},
+	date: {
+		type: Date,
+		required: true
+	},
+	dayOfWeek: {
+		type: String,
+		required: true
+	},
 	periods: [
 		{
 			type: Schema.Types.ObjectId,

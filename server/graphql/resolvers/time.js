@@ -7,7 +7,7 @@ module.exports = {
 		if (!req.isAuth) {
 			throw new Error('You are not authorized to create a new week.  Please log in and try again.')
 		}
-		const {weight, userId} = {...args.weekInput};
+		const {weight, userId, startDate} = {...args.weekInput};
 		//todo: create period
 		//todo: create day
 		//todo: add periods to days and days to week

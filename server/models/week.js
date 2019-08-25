@@ -15,6 +15,10 @@ const weekSchema = new Schema({
 		type: Number,
 		required: true
 	},
+	startDate: {
+		type: Date,
+		required: true
+	},
 	days: [
 		{
 			type: Schema.Types.ObjectId,
