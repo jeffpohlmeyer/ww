@@ -35,6 +35,8 @@ module.exports = buildSchema(`
 			password: String
 			startDay: Int
 			flexPoints: Int
+			height: Float
+			birthDate: String
 			createdRecipes: [Recipe!]
 		}
 				

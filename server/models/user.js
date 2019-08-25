@@ -23,6 +23,14 @@ const userSchema = new Schema({
 		type: Number,
 		required: false
 	},
+	height: {
+		type: Number,
+		required: false
+	},
+	birthDate: {
+		type: Date,
+		required: false
+	},
 	createdRecipes: [
 		{
 			type: Schema.Types.ObjectId,
