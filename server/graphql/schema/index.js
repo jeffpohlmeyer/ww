@@ -107,7 +107,6 @@ module.exports = buildSchema(`
 		input WeekInput {
 			weight: Float!
 			userId: String!
-			startDate: String!
 		}
 		
 		type RootQuery {
