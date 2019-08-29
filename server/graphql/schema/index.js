@@ -109,11 +109,17 @@ module.exports = buildSchema(`
 			userId: String!
 		}
 		
+		input PeriodInput {
+			id: ID!
+			timePeriod: String!
+		}
+		
 		type RootQuery {
 			foods: [Food!]!
 			recipes: [Recipe!]!
 			login(email: String!, password: String!): AuthData!
 			getUsernames: [String]!
+			period(id: String!): Period!
 		}
 		
 		type RootMutation {
@@ -121,6 +127,8 @@ module.exports = buildSchema(`
 			createRecipe(recipeInput: RecipeInput): Recipe
 			createUser(userInput: UserInput): User
 			createWeek(weekInput: WeekInput): Week
+			addFoodToPeriod(foodInput: FoodInput, periodInput: PeriodInput): Period 
+			addRecipeToPeriod(recipeInput: RecipeInput, periodInput: PeriodInput): Period
 		}
 		
 		schema {

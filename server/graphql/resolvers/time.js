@@ -21,4 +21,8 @@ module.exports = {
 		//todo: get user info (flexPoints) to set up week flexPoints
 		//todo: you'll calculate points based on weight
 	},
+
+	period: async ({id}) => {
+		return await Period.findById(id);
+	}
 };
