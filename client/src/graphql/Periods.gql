@@ -1,0 +1,6 @@
+query Periods {
+  periods {
+    _id
+    timePeriod
+  }
+}
