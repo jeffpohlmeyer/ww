@@ -24,5 +24,10 @@ module.exports = {
 
 	period: async ({id}) => {
 		return await Period.findById(id);
+	},
+
+	// Will remove this later.  This is set up solely for checking proper hook-up of front end to back end queries
+	periods: async () => {
+		return await Period.find();
 	}
 };

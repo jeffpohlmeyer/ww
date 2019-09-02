@@ -120,6 +120,7 @@ module.exports = buildSchema(`
 			login(email: String!, password: String!): AuthData!
 			getUsernames: [String]!
 			period(id: String!): Period!
+			periods: [Period!]
 		}
 		
 		type RootMutation {
