@@ -63,10 +63,10 @@ module.exports = {
 		});
 		const mailOptions = {
 			from: "jeff.pohlmeyer@gmail.com",
-			to: "jeffvp@protonmail.ch",
+			to: "jeff.pohlmeyer@gmail.com",
 			subject: "Node.js Email with Secure OAuth",
 			generateTextFromHTML: true,
-			html: "<b>test</b>"
+			html: "<b>i gOT tHis WOrKiNG fROM My gRaPHql CoDE YAY!</b>"
 		};
 		try {
 			const response = await smtpTransport.sendMail(mailOptions);
