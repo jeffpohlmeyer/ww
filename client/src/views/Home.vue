@@ -1,13 +1,23 @@
 <template>
-  <HelloWorld />
+  <div></div>
 </template>
 
 <script>
-import HelloWorld from "../components/HelloWorld";
+  import { mapState } from 'vuex';
 
 export default {
-  components: {
-    HelloWorld
+	computed: {
+		...mapState({
+      token: state => state.token,
+    })
+  },
+  created() {
+		if (!this.token) {
+			//redirect to login
+			console.log('no token')
+    } else {
+			//redirect to home page
+    }
   }
 };
 </script>
