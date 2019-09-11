@@ -3,7 +3,7 @@
     {{ day }}
     <ul>
       <li v-for="period in periods" :key="period._id">
-        {{ period._id }} -> {{ period.timePeriod }}
+        {{ period }}
       </li>
     </ul>
   </v-container>
@@ -11,6 +11,7 @@
 
 <script>
 import PERIODS from "../graphql/Periods.gql";
+import DAY from "../graphql/Day.gql";
 
 export default {
   name: "Day",
@@ -26,11 +27,21 @@ export default {
     periods: {
       query: PERIODS,
       update: data => data.periods
+    },
+    day: {
+      query: DAY,
+      variables: {
+        dayInput: {
+          date: "test"
+        }
+      }
     }
   },
+  created() {
+    this.$apollo.queries.day;
+  },
   mounted() {
-    this.$apollo.queries.periods;
-    console.log("this.periods", this.periods);
+    console.log("this.day", this.day);
   }
 };
 </script>

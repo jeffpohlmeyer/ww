@@ -8,7 +8,7 @@
             <span v-on="on">
               <span class="headline text-uppercase">WW</span>
               <span class="font-weight-light text-capitalize subtitle-1">
-                Points Plus* Tracking
+                Points* Tracking
               </span>
             </span>
           </template>
@@ -19,7 +19,12 @@
         </v-tooltip>
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn fab depressed small>
+      <v-btn
+        fab
+        depressed
+        small
+        v-if="loggedIn"
+      >
         <v-icon>{{ svgPath }}</v-icon>
       </v-btn>
     </v-app-bar>
@@ -37,6 +42,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
 import { mdiAccountOutline } from "@mdi/js";
 
 export default {
@@ -45,6 +51,11 @@ export default {
   data: () => ({
     drawer: true,
     svgPath: mdiAccountOutline
-  })
+  }),
+  computed: {
+    ...mapGetters({
+      loggedIn: 'getLoggedIn',
+    })
+  }
 };
 </script>
