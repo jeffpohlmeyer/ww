@@ -2,7 +2,11 @@
   <v-app>
     <v-app-bar app clipped-left>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
-      <v-icon @click="goHome" class="mx-2">{{ homeIcon }}</v-icon>
+      <v-icon
+        v-if="!atHome"
+        class="mx-2"
+        @click="goHome"
+      >{{ homeIcon }}</v-icon>
       <v-toolbar-title>
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
@@ -57,7 +61,8 @@
 		computed: {
 			...mapGetters({
 				loggedIn: 'getLoggedIn',
-			})
+			}),
+      atHome() { return this.$route.name === 'Home' }
 		},
     methods: {
 			goHome() {
