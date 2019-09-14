@@ -5,7 +5,6 @@
         sm="8"
       >
         <v-card>
-          <form>
             <v-card-title>
               Register
             </v-card-title>
@@ -55,7 +54,7 @@
                   <v-btn
                     small
                     rounded
-                    :disabled="!valid"
+                    :disabled="$v.$invalid"
                     class="text-capitalize"
                     color="success"
                     @click="submit"
@@ -75,9 +74,11 @@
                 </v-row>
               </v-container>
             </v-card-actions>
-          </form>
         </v-card>
       </v-col>
+    </v-row>
+    <v-row justify="center">
+      Already have an account?  Click<router-link :to="{name: 'Login'}" class="mx-1"> here </router-link>to log in.
     </v-row>
   </v-container>
 </template>
@@ -130,7 +131,7 @@
     },
     methods: {
 	    submit() {
-		    this.$v.$touch()
+		    this.$v.$touch();
         console.log('this.$v.$invalid', this.$v.$invalid)
 	    },
 	    reset () {

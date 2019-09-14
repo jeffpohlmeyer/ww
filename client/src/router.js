@@ -10,7 +10,7 @@ export default new Router({
   routes: [
     {
       path: "/",
-      name: "home",
+      name: "Home",
       component: Home
     },
     {
@@ -37,6 +37,11 @@ export default new Router({
 			  	path: "register",
 				  name: "Register",
 				  component: () => import ("./components/user-management/Register")
+			  },
+			  {
+			  	path: "forgot_password",
+				  name: "ForgotPassword",
+				  component: () => import ('./components/user-management/ForgotPassword')
 			  }
 		  ]
 	  }

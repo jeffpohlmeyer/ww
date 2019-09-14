@@ -6,11 +6,12 @@
       >
         <v-card>
             <v-card-title>
-              Log In
+              Reset Password
             </v-card-title>
             <v-card-text>
 
               <v-text-field
+                v-if="!submitted"
                 v-model="email"
                 :error-messages="emailErrors"
                 label="E-mail"
@@ -19,23 +20,12 @@
                 required
               ></v-text-field>
 
-              <v-text-field
-                v-model="password"
-                :error-messages="passwordErrors"
-                :append-icon="passwordVisibility"
-                :type="show ? 'text' : 'password'"
-                hint="Between 10 and 32 characters"
-                counter
-                label="Password"
-                @input="$v.password.$touch()"
-                @blur="$v.password.$touch()"
-                required
-                @click:append="show = !show"
-              ></v-text-field>
-
+              <p v-if="submitted">
+                {{ submittedText }}
+              </p>
             </v-card-text>
             <v-card-actions>
-              <v-container>
+              <v-container v-if="!submitted">
                 <v-row justify="end">
                   <v-btn
                     small
@@ -63,14 +53,6 @@
         </v-card>
       </v-col>
     </v-row>
-    <v-row justify="center">
-      <p>Need an account? Click
-        <router-link :to="{name: 'Register'}">here</router-link>
-        to sign up.</p>
-    </v-row>
-    <v-row justify="center">
-      <p>Forgot your password? Click <router-link :to="{name: 'ForgotPassword'}">here</router-link> to reset.</p>
-    </v-row>
   </v-container>
 </template>
 
@@ -80,16 +62,15 @@
 	import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js';
 
 	export default {
-		name: "Login",
+		name: "ForgotPassword",
 		mixins: [validationMixin],
 		validations: {
 			email: { required, email },
-			password: { required, minLength: minLength(10), maxLength: maxLength(10) },
 		},
 		data: () => ({
 			email: '',
-			password: '',
-			show: false,
+      submitted: false,
+      foundEmail: true,
 		}),
 		computed: {
 			emailErrors() {
@@ -99,27 +80,23 @@
 				!this.$v.email.email && errors.push('A valid email address is required.');
 				return errors
 			},
-			passwordErrors() {
-				const errors = [];
-				if (!this.$v.password.$dirty) return errors;
-				!this.$v.password.required && errors.push('A password is required.');
-				!this.$v.password.minLength && errors.push('Passwords must be at least 10 characters.');
-				!this.$v.password.maxLength && errors.push('Passwords cannot be any longer than 32 characters.');
-				return errors
-			},
-			passwordVisibility() { return !this.show ? mdiEyeOutline : mdiEyeOffOutline },
+      submittedText() {
+				return !!this.foundEmail ?
+          `An email has been sent to ${this.email} with instructions on how to reset your password.  You may close this page.` :
+          `No account with ${this.email} has been found in the system.`
+      }
 		},
-		methods: {
-			submit() {
-				this.$v.$touch();
-				console.log('this.$v.$invalid', this.$v.$invalid)
-			},
-			reset () {
-				this.$v.$reset();
-				this.email = '';
-				this.password = '';
-			},
-		}
+    methods: {
+	    submit() {
+		    this.$v.$touch();
+		    console.log('this.$v.$invalid', this.$v.$invalid)
+        this.submitted = true;
+	    },
+	    reset () {
+		    this.$v.$reset();
+		    this.email = '';
+	    },
+    }
 	}
 </script>
 
