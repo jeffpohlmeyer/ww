@@ -39,6 +39,12 @@ module.exports = buildSchema(`
 			birthDate: String
 			createdRecipes: [Recipe!]
 		}
+		
+		type Token {
+			_userId: User!
+			token: String!
+			createdAt: String!
+		}
 				
 		type AuthData {
 			userId: ID!
@@ -68,6 +74,10 @@ module.exports = buildSchema(`
 			timePeriod: String!
 			foods: [Food]!
 			recipes: [Recipe]!
+		}
+		
+		input DayInput {
+			date: String!
 		}
 				
 		input FoodInput {
@@ -99,9 +109,6 @@ module.exports = buildSchema(`
 		input UserInput {
 			email: String!
 			password: String!
-			username: String
-			startDay: Int
-			flexPoints: Int
 		}
 		
 		input WeekInput {
@@ -121,6 +128,8 @@ module.exports = buildSchema(`
 			getUsernames: [String]!
 			period(id: String!): Period!
 			periods: [Period!]
+			day(dayInput: DayInput): Day
+			days: [Day!]
 		}
 		
 		type RootMutation {

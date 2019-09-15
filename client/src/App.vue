@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <BaseSnackbar />
     <v-app-bar app clipped-left>
       <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
       <v-icon
@@ -49,10 +50,11 @@
 <script>
 	import { mapGetters } from 'vuex';
 	import { mdiAccountOutline, mdiHomeOutline } from "@mdi/js";
+	import BaseSnackbar from "./components/BaseFunctionality/BaseSnackbar";
 
 	export default {
 		name: "App",
-		components: {},
+		components: {BaseSnackbar},
 		data: () => ({
 			drawer: true,
 			userIcon: mdiAccountOutline,

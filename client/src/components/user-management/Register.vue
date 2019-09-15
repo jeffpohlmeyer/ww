@@ -5,75 +5,76 @@
         sm="8"
       >
         <v-card>
-            <v-card-title>
-              Register
-            </v-card-title>
-            <v-card-text>
+          <v-card-title>
+            Register
+          </v-card-title>
+          <v-card-text>
 
-              <v-text-field
-                v-model="email"
-                :error-messages="emailErrors"
-                label="E-mail"
-                @input="$v.email.$touch()"
-                @blur="$v.email.$touch()"
-                required
-              ></v-text-field>
+            <v-text-field
+              v-model="email"
+              :error-messages="emailErrors"
+              label="E-mail"
+              @input="$v.email.$touch()"
+              @blur="$v.email.$touch()"
+              required
+            ></v-text-field>
 
-              <v-text-field
-                v-model="passwordOne"
-                :error-messages="passwordOneErrors"
-                :append-icon="passwordOneVisibility"
-                :type="showOne ? 'text' : 'password'"
-                hint="Between 10 and 32 characters"
-                counter
-                label="Password"
-                @input="$v.passwordOne.$touch()"
-                @blur="$v.passwordOne.$touch()"
-                required
-                @click:append="showOne = !showOne"
-              ></v-text-field>
+            <v-text-field
+              v-model="password"
+              :error-messages="passwordErrors"
+              :append-icon="passwordVisibility"
+              :type="showPassword ? 'text' : 'password'"
+              hint="Between 10 and 32 characters"
+              counter
+              label="Password"
+              @input="$v.password.$touch()"
+              @blur="$v.password.$touch()"
+              required
+              @click:append="showPassword = !showPassword"
+            ></v-text-field>
 
-              <v-text-field
-                v-model="passwordTwo"
-                :error-messages="passwordTwoErrors"
-                :append-icon="passwordTwoVisibility"
-                :type="showTwo ? 'text' : 'password'"
-                hint="Between 10 and 32 characters"
-                counter
-                label="Password (Confirm)"
-                @input="$v.passwordTwo.$touch()"
-                @blur="$v.passwordTwo.$touch()"
-                required
-                @click:append="showTwo = !showTwo"
-              ></v-text-field>
+            <v-text-field
+              v-model="repeatPassword"
+              :error-messages="repeatPasswordErrors"
+              :append-icon="repeatPasswordVisibility"
+              :type="showRepeat ? 'text' : 'password'"
+              hint="Between 10 and 32 characters"
+              counter
+              label="Password (Confirm)"
+              @input="$v.repeatPassword.$touch()"
+              @blur="$v.repeatPassword.$touch()"
+              required
+              @click:append="showRepeat = !showRepeat"
+            ></v-text-field>
 
-            </v-card-text>
-            <v-card-actions>
-              <v-container>
-                <v-row justify="end">
-                  <v-btn
-                    small
-                    rounded
-                    :disabled="$v.$invalid"
-                    class="text-capitalize"
-                    color="success"
-                    @click="submit"
-                  >
-                    Submit
-                  </v-btn>
+          </v-card-text>
+          <v-card-actions>
+            <v-container>
+              <v-row justify="end">
+                <v-btn
+                  small
+                  rounded
+                  :loading="loading"
+                  :disabled="$v.$invalid"
+                  class="text-capitalize"
+                  color="success"
+                  @click="submit"
+                >
+                  Submit
+                </v-btn>
 
-                  <v-btn
-                    small
-                    rounded
-                    class="text-capitalize"
-                    color="error"
-                    @click="reset"
-                  >
-                    Reset Form
-                  </v-btn>
-                </v-row>
-              </v-container>
-            </v-card-actions>
+                <v-btn
+                  small
+                  rounded
+                  class="text-capitalize"
+                  color="error"
+                  @click="reset"
+                >
+                  Reset Form
+                </v-btn>
+              </v-row>
+            </v-container>
+          </v-card-actions>
         </v-card>
       </v-col>
     </v-row>
@@ -84,63 +85,91 @@
 </template>
 
 <script>
-  import { validationMixin } from 'vuelidate';
-  import { required, minLength, maxLength, sameAs, email} from 'vuelidate/lib/validators';
+  import { onError } from "apollo-link-error";
+
+	import { validationMixin } from 'vuelidate';
+	import { required, minLength, maxLength, sameAs, email} from 'vuelidate/lib/validators';
 	import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js';
+
+	import REGISTER from "../../graphql/User/Register.gql";
 
 	export default {
 		name: "Register",
-    mixins: [validationMixin],
-    validations: {
+		mixins: [validationMixin],
+		validations: {
 			email: { required, email },
-      passwordOne: { required, minLength: minLength(10), maxLength: maxLength(10) },
-      passwordTwo: { sameAsPassword: sameAs('passwordOne') }
-    },
-    data: () => ({
-      email: '',
-      passwordOne: '',
-      showOne: false,
-      passwordTwo: '',
-      showTwo: false,
-    }),
-    computed: {
+			password: { required, minLength: minLength(10), maxLength: maxLength(10) },
+			repeatPassword: { sameAsPassword: sameAs('password') }
+		},
+		data: () => ({
+			email: '',
+			password: '',
+			showPassword: false,
+			repeatPassword: '',
+			showRepeat: false,
+      loading: false,
+		}),
+		computed: {
 			emailErrors() {
 				const errors = [];
 				if (!this.$v.email.$dirty) return errors;
 				!this.$v.email.required && errors.push('Email is required.');
 				!this.$v.email.email && errors.push('A valid email address is required.');
-        return errors
-      },
-      passwordOneErrors() {
-				const errors = [];
-				if (!this.$v.passwordOne.$dirty) return errors;
-        !this.$v.passwordOne.required && errors.push('A password is required.');
-        !this.$v.passwordOne.minLength && errors.push('Passwords must be at least 10 characters.');
-        !this.$v.passwordOne.maxLength && errors.push('Passwords cannot be any longer than 32 characters.');
-        return errors
-      },
-      passwordTwoErrors() {
-				const errors = [];
-				if (!this.$v.passwordTwo.$dirty) return errors;
-				!this.$v.passwordTwo.sameAsPassword && errors.push('Passwords must match.');
 				return errors
-      },
-	    passwordOneVisibility() { return !this.showOne ? mdiEyeOutline : mdiEyeOffOutline },
-	    passwordTwoVisibility() { return !this.showTwo ? mdiEyeOutline : mdiEyeOffOutline },
-      valid() { return !this.$v.$invalid }
-    },
-    methods: {
-	    submit() {
-		    this.$v.$touch();
-        console.log('this.$v.$invalid', this.$v.$invalid)
-	    },
-	    reset () {
-	    	this.$v.$reset();
-	    	this.email = '';
-	    	this.passwordOne = '';
-	    	this.passwordTwo = '';
-	    },
-    }
+			},
+			passwordErrors() {
+				const errors = [];
+				if (!this.$v.password.$dirty) return errors;
+				!this.$v.password.required && errors.push('A password is required.');
+				!this.$v.password.minLength && errors.push('Passwords must be at least 10 characters.');
+				!this.$v.password.maxLength && errors.push('Passwords cannot be any longer than 32 characters.');
+				return errors
+			},
+			repeatPasswordErrors() {
+				const errors = [];
+				if (!this.$v.repeatPassword.$dirty) return errors;
+				!this.$v.repeatPassword.sameAsPassword && errors.push('Passwords must match.');
+				return errors
+			},
+			passwordVisibility() { return !this.showPassword ? mdiEyeOutline : mdiEyeOffOutline },
+			repeatPasswordVisibility() { return !this.showRepeat ? mdiEyeOutline : mdiEyeOffOutline },
+			valid() { return !this.$v.$invalid }
+		},
+		methods: {
+			async submit() {
+				this.loading = true;
+				try {
+					this.$v.$touch();
+					const response = await this.$apollo.mutate({
+						mutation: REGISTER,
+						variables: {
+							userInput: {
+								email: this.email,
+								password: this.password
+							}
+						}
+					})
+					console.log('response', response)
+        } catch(err) {
+					this.loading = false;
+					if (!!err.graphQLErrors) {
+						const message = err.graphQLErrors.map(e => e.message).join(' ');
+						const color = 'error';
+						const snackbar = true;
+						this.$store.commit('setSnackbarData', {message, color, snackbar})
+          }
+          console.log(
+          	`[user-management/Register/submit] An error occurred ${err}`
+          );
+        }
+			},
+			reset () {
+				this.$v.$reset();
+				this.email = '';
+				this.password = '';
+				this.repeatPassword = '';
+			},
+		}
 	}
 </script>
 
