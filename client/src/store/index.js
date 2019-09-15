@@ -11,11 +11,25 @@ export default new Vuex.Store({
 	modules: {},
   state: {
 		token: null,
+	  snackbar: false,
+	  snackbarMessage: '',
+	  snackbarColor: '',
+	  snackbarTimeout: 6000,
   },
 	getters: {
 		getLoggedIn: state => !!state.token,
 	},
-  mutations: {},
+  mutations: {
+		setSnackbar(state, payload) {
+			state.snackbar = payload;
+		},
+	  setSnackbarData(state, payload) {
+			state.snackbar = payload.snackbar;
+			state.snackbarMessage = payload.message;
+			state.snackbarColor = payload.color;
+			state.snackbarTimeout = !!payload.snackbarTimeout ? payload.snackbarTimeout : 6000;
+	  }
+  },
   actions: {},
 	strict: debug,
 	plugins: [createPersistedState({
