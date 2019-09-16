@@ -36,7 +36,19 @@ const userSchema = new Schema({
 			type: Schema.Types.ObjectId,
 			ref: 'Recipe'
 		}
-	]
+	],
+	isVerified: {
+		type: Boolean,
+		default: false
+	},
+	token: {
+		type: String,
+		required: false
+	},
+	tokenExpiration: {
+		type: Date,
+		required: false
+	}
 });
 
 module.exports = mongoose.model('User', userSchema);

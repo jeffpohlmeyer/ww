@@ -1,0 +1,8 @@
+mutation RegisterConfirm ($token: String) {
+  validateEmail(token: $token) {
+    userId
+    token
+    tokenExpiration
+    email
+  }
+}

@@ -18,11 +18,11 @@ export default new Router({
       name: "Day",
       component: () => import("./views/Day")
     },
-    {
-      path: "/apollo",
-      name: "Apollo",
-      component: () => import("./components/ApolloExample")
-    },
+	  {
+	  	path: "/account",
+		  name: "Account",
+		  component: () => import("./views/Account")
+	  },
 	  {
 	  	path: "/user",
 		  name: "User",
@@ -37,6 +37,11 @@ export default new Router({
 			  	path: "register",
 				  name: "Register",
 				  component: () => import ("./components/user-management/Register")
+			  },
+			  {
+			  	path: "register-confirm/:token",
+				  name: "RegisterConfirm",
+				  component: () => import ("./components/user-management/RegisterConfirm")
 			  },
 			  {
 			  	path: "forgot_password",

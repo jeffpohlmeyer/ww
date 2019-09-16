@@ -1,12 +1,20 @@
 const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { google } = require('googleapis');
-const OAuth2 = google.auth.OAuth2;
+const randomstring = require('randomstring');
+const mg = require('nodemailer-mailgun-transport');
 
 const User = require('../../models/user');
+const { jwtToken } = require('./utils/auth');
+
+const auth = {
+	auth: {
+		api_key: process.env.MAILGUN_API_KEY,
+		domain: process.env.MAILGUN_DOMAIN,
+	}
+};
 
 module.exports = {
+
 	createUser: async args => {
 		try {
 			const foundUser = await User.findOne({email: args.userInput.email});
@@ -14,13 +22,47 @@ module.exports = {
 				throw new Error('This email address is already registered.')
 			}
 			const hashedPassword = await bcrypt.hash(args.userInput.password, 12);
+			const token = randomstring.generate();
+			const now = new Date;
+			const tokenExpiration = new Date(now.getTime() + 30*60000);
 			const user = new User({
 				email: args.userInput.email,
-				password: hashedPassword
+				password: hashedPassword,
+				token,
+				tokenExpiration
 			});
+
 			await user.save();
-			return {...user._doc, password: null, _id: user._id.toString()}
+			const nodemailerMailgun = nodemailer.createTransport(mg(auth));
+
+			const link = `${process.env.CLIENT_URL}/user/register-confirm/${token}`;
+
+			const mailOptions = {
+				from: process.env.MAILGUN_SENDER,
+				to: args.userInput.email,
+				subject: "WW Registration Confirmation",
+				generateTextFromHTML: true,
+				html: `<h1>Email Confirmation Link</h1><div><p>Follow <a href='${link}' target="_blank">this link</a> to confirm your email address.</p><p>The link expires on ${tokenExpiration}.</p></div>`
+			};
+
+			await nodemailerMailgun.sendMail(mailOptions);
+
+			return Promise.resolve();
 		} catch (err) {
+			throw err;
+		}
+	},
+	validateEmail: async args => {
+		try {
+			const user = await User.findOne({token: args.token});
+			if (!user) {
+				throw new Error('The token provided is invalid.  Please try to re-send the validation email.');
+			}
+			user.isValidated = true;
+			await user.save();
+			const token = await jwtToken(user);
+			return { userId: user.id, token, tokenExpiration: 1, email: user.email }
+		} catch(err) {
 			throw err;
 		}
 	},
@@ -34,47 +76,13 @@ module.exports = {
 			if (!isEqual) {
 				throw new Error('The password is incorrect');
 			}
-			const token = jwt.sign({userId: user.id, email: user.email}, process.env.JWT_SECRET_KEY, {expiresIn: '1h'});
+			const token = await jwtToken(user);
 			return { userId: user.id, token, tokenExpiration: 1 }
 		} catch(err) {
 			throw err;
 		}
 	},
 	getUsernames: async (args, req) => {
-		const oauth2Client = new OAuth2(
-			process.env.CLIENT_ID,
-			process.env.CLIENT_SECRET,
-			"https://developers.google.com/oauthplayground"
-		);
-		oauth2Client.setCredentials({
-			refresh_token: process.env.REFRESH_TOKEN
-		});
-		const accessToken = oauth2Client.getAccessToken();
-		const smtpTransport = nodemailer.createTransport({
-			service: "gmail",
-			auth: {
-				type: "OAuth2",
-				user: "jeff.pohlmeyer@gmail.com",
-				clientId: process.env.CLIENT_ID,
-				clientSecret: process.env.CLIENT_SECRET,
-				refreshToken: process.env.REFRESH_TOKEN,
-				accessToken
-			}
-		});
-		const mailOptions = {
-			from: "jeff.pohlmeyer@gmail.com",
-			to: "jeff.pohlmeyer@gmail.com",
-			subject: "Node.js Email with Secure OAuth",
-			generateTextFromHTML: true,
-			html: "<b>i gOT tHis WOrKiNG fROM My gRaPHql CoDE YAY!</b>"
-		};
-		try {
-			const response = await smtpTransport.sendMail(mailOptions);
-			console.log('response', response)
-			smtpTransport.close();
-		} catch(err) {
-			throw err;
-		}
 		// if (!req.isAuth) {
 		// 	throw new Error('You are not authorized to do this.');
 		// }

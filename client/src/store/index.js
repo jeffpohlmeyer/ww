@@ -20,6 +20,9 @@ export default new Vuex.Store({
 		getLoggedIn: state => !!state.token,
 	},
   mutations: {
+		setToken(state, payload) {
+			state.token = payload;
+		},
 		setSnackbar(state, payload) {
 			state.snackbar = payload;
 		},

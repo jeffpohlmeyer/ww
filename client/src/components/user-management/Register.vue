@@ -1,92 +1,101 @@
 <template>
   <v-container>
-    <v-row justify="center">
-      <v-col
-        sm="8"
+    <div
+      v-if="!submitted"
+    >
+      <v-row
+        justify="center"
       >
-        <v-card>
-          <v-card-title>
-            Register
-          </v-card-title>
-          <v-card-text>
+        <v-col
+          sm="8"
+        >
+          <v-card>
+            <v-card-title>
+              Register
+            </v-card-title>
+            <v-card-text>
 
-            <v-text-field
-              v-model="email"
-              :error-messages="emailErrors"
-              label="E-mail"
-              @input="$v.email.$touch()"
-              @blur="$v.email.$touch()"
-              required
-            ></v-text-field>
+              <v-text-field
+                v-model="email"
+                :error-messages="emailErrors"
+                label="E-mail"
+                @input="$v.email.$touch()"
+                @blur="$v.email.$touch()"
+                required
+              ></v-text-field>
 
-            <v-text-field
-              v-model="password"
-              :error-messages="passwordErrors"
-              :append-icon="passwordVisibility"
-              :type="showPassword ? 'text' : 'password'"
-              hint="Between 10 and 32 characters"
-              counter
-              label="Password"
-              @input="$v.password.$touch()"
-              @blur="$v.password.$touch()"
-              required
-              @click:append="showPassword = !showPassword"
-            ></v-text-field>
+              <v-text-field
+                v-model="password"
+                :error-messages="passwordErrors"
+                :append-icon="passwordVisibility"
+                :type="showPassword ? 'text' : 'password'"
+                hint="Between 10 and 32 characters"
+                counter
+                label="Password"
+                @input="$v.password.$touch()"
+                @blur="$v.password.$touch()"
+                required
+                @click:append="showPassword = !showPassword"
+              ></v-text-field>
 
-            <v-text-field
-              v-model="repeatPassword"
-              :error-messages="repeatPasswordErrors"
-              :append-icon="repeatPasswordVisibility"
-              :type="showRepeat ? 'text' : 'password'"
-              hint="Between 10 and 32 characters"
-              counter
-              label="Password (Confirm)"
-              @input="$v.repeatPassword.$touch()"
-              @blur="$v.repeatPassword.$touch()"
-              required
-              @click:append="showRepeat = !showRepeat"
-            ></v-text-field>
+              <v-text-field
+                v-model="repeatPassword"
+                :error-messages="repeatPasswordErrors"
+                :append-icon="repeatPasswordVisibility"
+                :type="showRepeat ? 'text' : 'password'"
+                hint="Between 10 and 32 characters"
+                counter
+                label="Password (Confirm)"
+                @input="$v.repeatPassword.$touch()"
+                @blur="$v.repeatPassword.$touch()"
+                required
+                @click:append="showRepeat = !showRepeat"
+              ></v-text-field>
 
-          </v-card-text>
-          <v-card-actions>
-            <v-container>
-              <v-row justify="end">
-                <v-btn
-                  small
-                  rounded
-                  :loading="loading"
-                  :disabled="$v.$invalid"
-                  class="text-capitalize"
-                  color="success"
-                  @click="submit"
-                >
-                  Submit
-                </v-btn>
+            </v-card-text>
+            <v-card-actions>
+              <v-container>
+                <v-row justify="end">
+                  <v-btn
+                    small
+                    rounded
+                    :loading="loading"
+                    :disabled="$v.$invalid"
+                    class="text-capitalize"
+                    color="success"
+                    @click="submit"
+                  >
+                    Submit
+                  </v-btn>
 
-                <v-btn
-                  small
-                  rounded
-                  class="text-capitalize"
-                  color="error"
-                  @click="reset"
-                >
-                  Reset Form
-                </v-btn>
-              </v-row>
-            </v-container>
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row justify="center">
-      Already have an account?  Click<router-link :to="{name: 'Login'}" class="mx-1"> here </router-link>to log in.
-    </v-row>
+                  <v-btn
+                    small
+                    rounded
+                    class="text-capitalize"
+                    color="error"
+                    @click="reset"
+                  >
+                    Reset Form
+                  </v-btn>
+                </v-row>
+              </v-container>
+            </v-card-actions>
+          </v-card>
+        </v-col>
+      </v-row>
+      <v-row justify="center">
+        Already have an account?  Click<router-link :to="{name: 'Login'}" class="mx-1"> here </router-link>to log in.
+      </v-row>
+    </div>
+    <div v-if="submitted">
+      <v-row justify="center">
+        Please check your email for a confirmation link.  If you don't receive it soon please check your spam filter.  You can close this page.
+      </v-row>
+    </div>
   </v-container>
 </template>
 
 <script>
-  import { onError } from "apollo-link-error";
-
 	import { validationMixin } from 'vuelidate';
 	import { required, minLength, maxLength, sameAs, email} from 'vuelidate/lib/validators';
 	import { mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js';
@@ -107,7 +116,8 @@
 			showPassword: false,
 			repeatPassword: '',
 			showRepeat: false,
-      loading: false,
+			loading: false,
+			submitted: false,
 		}),
 		computed: {
 			emailErrors() {
@@ -140,7 +150,7 @@
 				this.loading = true;
 				try {
 					this.$v.$touch();
-					const response = await this.$apollo.mutate({
+					await this.$apollo.mutate({
 						mutation: REGISTER,
 						variables: {
 							userInput: {
@@ -148,20 +158,21 @@
 								password: this.password
 							}
 						}
-					})
-					console.log('response', response)
-        } catch(err) {
+					});
+					this.loading = false;
+					this.submitted = true;
+				} catch(err) {
 					this.loading = false;
 					if (!!err.graphQLErrors) {
 						const message = err.graphQLErrors.map(e => e.message).join(' ');
 						const color = 'error';
 						const snackbar = true;
 						this.$store.commit('setSnackbarData', {message, color, snackbar})
-          }
-          console.log(
-          	`[user-management/Register/submit] An error occurred ${err}`
-          );
-        }
+					}
+					console.log(
+						`[user-management/Register/submit] An error occurred ${err}`
+					);
+				}
 			},
 			reset () {
 				this.$v.$reset();

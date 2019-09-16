@@ -1,10 +1,17 @@
 <template>
-  <div></div>
+  <div>{{token}}</div>
 </template>
 
 <script>
+  import { mapState } from 'vuex';
+
 export default {
-  name: "Account"
+  name: "Account",
+  computed: {
+  	...mapState({
+      token: state => state.token
+    })
+  }
 };
 </script>
 

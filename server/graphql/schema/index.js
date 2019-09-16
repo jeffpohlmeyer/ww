@@ -38,6 +38,9 @@ module.exports = buildSchema(`
 			height: Float
 			birthDate: String
 			createdRecipes: [Recipe!]
+			isVerified: Boolean
+			token: String
+			tokenExpiration: String
 		}
 		
 		type Token {
@@ -50,6 +53,7 @@ module.exports = buildSchema(`
 			userId: ID!
 			token: String!
 			tokenExpiration: Int!
+			email: String
 		}
 		
 		type Week {
@@ -136,6 +140,7 @@ module.exports = buildSchema(`
 			createFood(foodInput: FoodInput): Food		
 			createRecipe(recipeInput: RecipeInput): Recipe
 			createUser(userInput: UserInput): User
+			validateEmail(token: String): AuthData! 
 			createWeek(weekInput: WeekInput): Week
 			addFoodToPeriod(foodInput: FoodInput, periodInput: PeriodInput): Period 
 			addRecipeToPeriod(recipeInput: RecipeInput, periodInput: PeriodInput): Period
