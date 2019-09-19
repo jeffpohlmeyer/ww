@@ -26,27 +26,32 @@ export default new Router({
 	  {
 	  	path: "/user",
 		  name: "User",
-		  component: () => import ("./views/User"),
+		  component: () => import("./views/User"),
 		  children: [
 			  {
 			  	path: "login",
 				  name: "Login",
-				  component: () => import ("./components/user-management/Login")
+				  component: () => import("./components/user-management/Login")
 			  },
 			  {
 			  	path: "register",
 				  name: "Register",
-				  component: () => import ("./components/user-management/Register")
+				  component: () => import("./components/user-management/Register")
 			  },
 			  {
 			  	path: "register-confirm/:token",
 				  name: "RegisterConfirm",
-				  component: () => import ("./components/user-management/RegisterConfirm")
+				  component: () => import("./components/user-management/RegisterConfirm")
 			  },
 			  {
 			  	path: "forgot_password",
 				  name: "ForgotPassword",
-				  component: () => import ('./components/user-management/ForgotPassword')
+				  component: () => import('./components/user-management/ForgotPassword')
+			  },
+			  {
+			  	path: "options",
+				  name: "UserOptions",
+				  component: () => import("./components/user-management/UserOptions")
 			  }
 		  ]
 	  }

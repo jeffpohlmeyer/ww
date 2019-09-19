@@ -18,7 +18,7 @@
 				});
 				const { validateEmail } = response.data;
 				this.$store.commit('setToken', validateEmail.token);
-				this.$router.push({name: 'Account'});
+				this.$router.push({name: 'UserOptions'});
       } catch(err) {
 				if (!!err.graphQLErrors) {
 					const message = err.graphQLErrors.map(e => e.message).join(' ');
